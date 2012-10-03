@@ -8,6 +8,7 @@ module OmniAuth
         :authorize_url => 'https://angel.co/api/oauth/authorize',
         :token_url => 'https://angel.co/api/oauth/token'
       }
+      option :provider_ignores_state, true
 
       def request_phase
         super
@@ -34,6 +35,7 @@ module OmniAuth
 
       def raw_ifno
         access_token.options[:mode] = :query
+        (access_token.options || {}).merge!({:header_format => 'OAuth %s'})
         @raw_ifno ||= access_token.get('https://api.angel.co/1/me').parsed
       end
     end

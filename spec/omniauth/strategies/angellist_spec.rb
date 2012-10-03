@@ -8,7 +8,8 @@ describe OmniAuth::Strategies::AngelList do
   end
   
   subject do
-    OmniAuth::Strategies::AngelList.new(nil, @options || {}).tap do |strategy|
+    args = [@client_id, @client_secret, @options].compact
+    OmniAuth::Strategies::AngelList.new(nil, *args).tap do |strategy|
       strategy.stub(:request) { @request }
     end
   end
