@@ -37,7 +37,7 @@ describe OmniAuth::Strategies::AngelList do
         'bio' => 'Sebas',
         'image' => 'foto',
       }
-      subject.stub(:raw_ifno) { @raw_info }
+      subject.stub(:raw_info) { @raw_info }
     end
     
     context 'when data is present in raw info' do
