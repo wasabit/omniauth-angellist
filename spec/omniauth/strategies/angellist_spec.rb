@@ -5,6 +5,8 @@ describe OmniAuth::Strategies::AngelList do
   before :each do
     @request = double('Request')
     @request.stub(:params) { {} }
+    @client_id = '123'
+    @client_secret = 'afalsf'
   end
   
   subject do
@@ -34,8 +36,30 @@ describe OmniAuth::Strategies::AngelList do
     before :each do
       @raw_info = {
         'name' => 'Sebastian Rabuini',
+        'email' => 'sebas@wasabit.com.ar',
         'bio' => 'Sebas',
-        'image' => 'foto',
+        'blog_url' => 'sebas_blog',
+        'online_bio_url' => 'http://wasabitlabs.com',
+        'twitter_url' => 'http://twitter.com/#!/sebasr',
+        'facebook_url' => 'http://www.facebook.com/sebastian.rabuini',
+        'linkedin_url' => 'http://www.linkedin.com/in/srabuini',
+        'follower_count' => 6,
+        'investor' => false,
+        'locations' => [
+          {'id' => 1963, 'tag_type' => 'LocationTag', 'name' => 'buenos aires',
+            'display_name' => 'Buenos Aires',
+            'angellist_url' => 'https://angel.co/buenos-aires'}
+        ],
+        'roles' => [
+          {'id' => 14726, 'tag_type' => 'RoleTag', 'name' => 'developer',
+            'display_name' => 'Developer',
+            'angellist_url' => 'https://angel.co/developer'},
+          {'id' => 14725, 'tag_type' => 'RoleTag', 'name' => 'entrepreneur',
+            'display_name' => 'Entrepreneur',
+            'angellist_url' => 'https://angel.co/entrepreneur-1'}
+        ],
+        'angellist_url' => 'https://angel.co/sebasr',
+        'image' => 'https://s3.amazonaws.com/photos.angel.co/users/90585-medium_jpg?1327684569'
       }
       subject.stub(:raw_info) { @raw_info }
     end
@@ -50,13 +74,22 @@ describe OmniAuth::Strategies::AngelList do
       end
     
       it 'returns the image' do
-        subject.info['image'].should eq('foto')
+        subject.info['image'].should eq(@raw_info['image'])
       end
 
-      it "sets the email blank if contact block is missing in raw_info" do
-        @raw_info.delete('contact')
-        subject.info['email'].should be_nil
+      it "return the email" do
+        subject.info['email'].should eq('sebas@wasabit.com.ar')
       end
+    end
+  end
+
+  describe '#authorize_params' do
+    before :each do
+      subject.stub(:session => {})
+    end
+
+    it 'includes default scope for email' do
+      subject.authorize_params['scope'].should eq('email')
     end
   end
   

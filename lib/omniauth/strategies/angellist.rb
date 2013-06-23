@@ -1,13 +1,21 @@
-require 'omniauth-oauth2'
+require 'omniauth/strategies/oauth2'
 
 module OmniAuth
   module Strategies
     class AngelList < OmniAuth::Strategies::OAuth2
+      DEFAULT_SCOPE = 'email'
+
       option :client_options, {
         :site => 'https://angel.co/',
         :authorize_url => 'https://angel.co/api/oauth/authorize',
         :token_url => 'https://angel.co/api/oauth/token'
       }
+
+      option :access_token_options, {
+        :mode => :qury,
+        :header_format => 'OAuth %s'
+      }
+
       option :provider_ignores_state, true
 
       def request_phase
@@ -27,17 +35,31 @@ module OmniAuth
           "facebook_url" => raw_info["facebook_url"],
           "linkedin_url" => raw_info["linkedin_url"],
           "follower_count" => raw_info["follower_count"],
-          "angellist_url" => raw_info["angellist_url"],
-          "image" => raw_info["image"],
+          "investor" => raw_info["investor"],
           "locations" => raw_info["locations"],
-          "roles" => raw_info["roles"]
+          "roles" => raw_info["roles"],
+          "angellist_url" => raw_info["angellist_url"],
+          "image" => raw_info["image"]
         }
       end
 
       def raw_info
-        access_token.options[:mode] = :query
-        (access_token.options || {}).merge!({:header_format => 'OAuth %s'})
         @raw_info ||= access_token.get('https://api.angel.co/1/me').parsed
+      end
+
+      def authorize_params
+        super.tap do |params|
+          %w[scope state].each do |v|
+            if request.params[v]
+              params[v.to_sym] = request.params[v]
+
+              # to support omniauth-oauth2's auto csrf protection
+              session['omniauth.state'] = params[:state] if v == 'state'
+            end
+          end
+
+          params[:scope] ||= DEFAULT_SCOPE
+        end
       end
     end
   end
