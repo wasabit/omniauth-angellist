@@ -39,7 +39,9 @@ module OmniAuth
           "locations" => raw_info["locations"],
           "roles" => raw_info["roles"],
           "angellist_url" => raw_info["angellist_url"],
-          "image" => raw_info["image"]
+          "image" => raw_info["image"],
+          "skills" => raw_info["skills"],
+          "scopes" => raw_info["scopes"]
         }
       end
 

@@ -58,6 +58,12 @@ describe OmniAuth::Strategies::AngelList do
             'display_name' => 'Entrepreneur',
             'angellist_url' => 'https://angel.co/entrepreneur-1'}
         ],
+        'skills' => [
+          {"id" => 82532, "tag_type" => "SkillTag", "name" => "ruby on rails",
+            "display_name" => "Ruby on Rails",
+            "angellist_url" => "https://angel.co/ruby-on-rails-1"}
+        ],
+        'scopes' => ["email","comment","message","talent"],
         'angellist_url' => 'https://angel.co/sebasr',
         'image' => 'https://s3.amazonaws.com/photos.angel.co/users/90585-medium_jpg?1327684569'
       }
@@ -79,6 +85,14 @@ describe OmniAuth::Strategies::AngelList do
 
       it "return the email" do
         subject.info['email'].should eq('sebas@wasabit.com.ar')
+      end
+
+      it "return scopes" do
+        subject.info['scopes'].should eq(["email","comment","message","talent"])
+      end
+
+      it "return skills" do
+        subject.info['skills'].first['name'].should eq("ruby on rails")
       end
     end
   end
