@@ -12,7 +12,7 @@ module OmniAuth
       }
 
       option :access_token_options, {
-        :mode => :qury,
+        :mode => :query,
         :header_format => 'OAuth %s'
       }
 
