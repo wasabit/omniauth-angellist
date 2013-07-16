@@ -41,7 +41,7 @@ describe OmniAuth::Strategies::AngelList do
       'image' => 'https://s3.amazonaws.com/photos.angel.co/users/90585-medium_jpg?1327684569'
     }
   end
-  
+
   subject do
     args = [@client_id, @client_secret, @options].compact
     OmniAuth::Strategies::AngelList.new(nil, *args).tap do |strategy|
@@ -69,7 +69,7 @@ describe OmniAuth::Strategies::AngelList do
     before :each do
       subject.stub(:raw_info) { @raw_info }
     end
-    
+
     context 'when data is present in raw info' do
       it 'returns the combined name' do
         subject.info['name'].should eq('Sebastian Rabuini')
@@ -78,7 +78,7 @@ describe OmniAuth::Strategies::AngelList do
       it 'returns the bio' do
         subject.info['bio'].should eq('Sebas')
       end
-    
+
       it 'returns the image' do
         subject.info['image'].should eq(@raw_info['image'])
       end
@@ -102,7 +102,7 @@ describe OmniAuth::Strategies::AngelList do
       subject.authorize_params['scope'].should eq('email')
     end
   end
-  
+
   describe '#credentials' do
     before :each do
       @access_token = double('OAuth2::AccessToken')
@@ -113,11 +113,11 @@ describe OmniAuth::Strategies::AngelList do
       subject.stub(:access_token) { @access_token }
       subject.stub(:raw_info) { @raw_info }
     end
-    
+
     it 'returns a Hash' do
       subject.credentials.should be_a(Hash)
     end
-    
+
     it 'returns the token' do
       subject.credentials['token'].should eq('123')
     end
@@ -125,15 +125,15 @@ describe OmniAuth::Strategies::AngelList do
     it "return scopes" do
       subject.credentials['scope'].should eq("email comment message talent")
     end
-    
+
     it 'returns the expiry status' do
       @access_token.stub(:expires?) { true }
       subject.credentials['expires'].should eq(true)
-      
+
       @access_token.stub(:expires?) { false }
       subject.credentials['expires'].should eq(false)
     end
-    
+
     it 'returns the refresh token and expiry time when expiring' do
       ten_mins_from_now = (Time.now + 360).to_i
       @access_token.stub(:expires?) { true }
@@ -142,14 +142,14 @@ describe OmniAuth::Strategies::AngelList do
       subject.credentials['refresh_token'].should eq('321')
       subject.credentials['expires_at'].should eq(ten_mins_from_now)
     end
-    
+
     it 'does not return the refresh token when it is nil and expiring' do
       @access_token.stub(:expires?) { true }
       @access_token.stub(:refresh_token) { nil }
       subject.credentials['refresh_token'].should be_nil
       subject.credentials.should_not have_key('refresh_token')
     end
-    
+
     it 'does not return the refresh token when not expiring' do
       @access_token.stub(:expires?) { false }
       @access_token.stub(:refresh_token) { 'XXX' }
