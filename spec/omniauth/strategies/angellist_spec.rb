@@ -88,7 +88,7 @@ describe OmniAuth::Strategies::AngelList do
       end
 
       it "return scopes" do
-        subject.info['scopes'].should eq(["email","comment","message","talent"])
+        subject.credentials['scope'].should eq("email comment message talent")
       end
 
       it "return skills" do
