@@ -25,7 +25,7 @@ module OmniAuth
       uid { raw_info['id'] }
 
       info do
-        {
+        prune!({
           "name" => raw_info["name"],
           "email" => raw_info["email"],
           "bio" => raw_info["bio"],
@@ -40,13 +40,25 @@ module OmniAuth
           "roles" => raw_info["roles"],
           "angellist_url" => raw_info["angellist_url"],
           "image" => raw_info["image"],
-          "skills" => raw_info["skills"],
-          "scopes" => raw_info["scopes"]
-        }
+          "skills" => raw_info["skills"]
+        })
+      end
+
+      credentials do
+        hash = {'token' => access_token.token}
+        hash.merge!('refresh_token' => access_token.refresh_token) if access_token.expires? && access_token.refresh_token
+        hash.merge!('expires_at' => access_token.expires_at) if access_token.expires?
+        hash.merge!('expires' => access_token.expires?)
+        hash.merge!('scope' => raw_info["scopes"] ? raw_info["scopes"].join(" ") : nil)
+        prune!(hash)
       end
 
       def raw_info
-        @raw_info ||= access_token.get('https://api.angel.co/1/me').parsed
+        unless skip_info?
+          @raw_info ||= access_token.get('https://api.angel.co/1/me').parsed
+        else
+          {}
+        end
       end
 
       def authorize_params
@@ -61,6 +73,14 @@ module OmniAuth
           end
 
           params[:scope] ||= DEFAULT_SCOPE
+        end
+      end
+
+    private
+      def prune!(hash)
+        hash.delete_if do |_, value|
+          prune!(value) if value.is_a?(Hash)
+          value.nil? || (value.respond_to?(:empty?) && value.empty?)
         end
       end
     end
