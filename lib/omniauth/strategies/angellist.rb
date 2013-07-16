@@ -40,9 +40,17 @@ module OmniAuth
           "roles" => raw_info["roles"],
           "angellist_url" => raw_info["angellist_url"],
           "image" => raw_info["image"],
-          "skills" => raw_info["skills"],
-          "scopes" => raw_info["scopes"]
+          "skills" => raw_info["skills"]
         }
+      end
+
+      credentials do
+        hash = {'token' => access_token.token}
+        hash.merge!('refresh_token' => access_token.refresh_token) if access_token.expires? && access_token.refresh_token
+        hash.merge!('expires_at' => access_token.expires_at) if access_token.expires?
+        hash.merge!('expires' => access_token.expires?)
+        hash.merge!('scope' => raw_info["scopes"] ? raw_info["scopes"].join(" ") : nil)
+        prune!(hash)
       end
 
       def raw_info
