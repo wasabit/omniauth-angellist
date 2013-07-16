@@ -25,7 +25,7 @@ module OmniAuth
       uid { raw_info['id'] }
 
       info do
-        {
+        prune!({
           "name" => raw_info["name"],
           "email" => raw_info["email"],
           "bio" => raw_info["bio"],
@@ -41,7 +41,7 @@ module OmniAuth
           "angellist_url" => raw_info["angellist_url"],
           "image" => raw_info["image"],
           "skills" => raw_info["skills"]
-        }
+        })
       end
 
       credentials do
@@ -54,7 +54,11 @@ module OmniAuth
       end
 
       def raw_info
-        @raw_info ||= access_token.get('https://api.angel.co/1/me').parsed
+        unless skip_info?
+          @raw_info ||= access_token.get('https://api.angel.co/1/me').parsed
+        else
+          {}
+        end
       end
 
       def authorize_params
