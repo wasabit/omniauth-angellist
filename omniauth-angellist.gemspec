@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/wasabit/omniauth-angellist"
   s.summary     = %q{AngelList OAuth strategy for OmniAuth}
   s.description = %q{AngelList OAuth strategy for OmniAuth}
+  s.license           = "MIT"
 
   s.rubyforge_project = "omniauth-angellist"
 
