@@ -19,24 +19,24 @@ describe OmniAuth::Strategies::AngelList do
       'follower_count' => 6,
       'investor' => false,
       'locations' => [
-        {'id' => 1963, 'tag_type' => 'LocationTag', 'name' => 'buenos aires',
+        { 'id' => 1963, 'tag_type' => 'LocationTag', 'name' => 'buenos aires',
           'display_name' => 'Buenos Aires',
-          'angellist_url' => 'https://angel.co/buenos-aires'}
+          'angellist_url' => 'https://angel.co/buenos-aires' }
       ],
       'roles' => [
-        {'id' => 14726, 'tag_type' => 'RoleTag', 'name' => 'developer',
+        { 'id' => 14726, 'tag_type' => 'RoleTag', 'name' => 'developer',
           'display_name' => 'Developer',
-          'angellist_url' => 'https://angel.co/developer'},
-        {'id' => 14725, 'tag_type' => 'RoleTag', 'name' => 'entrepreneur',
+          'angellist_url' => 'https://angel.co/developer' },
+        { 'id' => 14725, 'tag_type' => 'RoleTag', 'name' => 'entrepreneur',
           'display_name' => 'Entrepreneur',
-          'angellist_url' => 'https://angel.co/entrepreneur-1'}
+          'angellist_url' => 'https://angel.co/entrepreneur-1' }
       ],
       'skills' => [
-        {"id" => 82532, "tag_type" => "SkillTag", "name" => "ruby on rails",
-          "display_name" => "Ruby on Rails",
-          "angellist_url" => "https://angel.co/ruby-on-rails-1"}
+        { 'id' => 82532, 'tag_type' => 'SkillTag', 'name' => 'ruby on rails',
+          'display_name' => 'Ruby on Rails',
+          'angellist_url' => 'https://angel.co/ruby-on-rails-1' }
       ],
-      'scopes' => ["email","comment","message","talent"],
+      'scopes' => %w(email comment message talent),
       'angellist_url' => 'https://angel.co/sebasr',
       'image' => 'https://s3.amazonaws.com/photos.angel.co/users/90585-medium_jpg?1327684569'
     }
@@ -83,19 +83,19 @@ describe OmniAuth::Strategies::AngelList do
         subject.info['image'].should eq(@raw_info['image'])
       end
 
-      it "return the email" do
+      it 'return the email' do
         subject.info['email'].should eq('sebas@wasabit.com.ar')
       end
 
-      it "return skills" do
-        subject.info['skills'].first['name'].should eq("ruby on rails")
+      it 'return skills' do
+        subject.info['skills'].first['name'].should eq('ruby on rails')
       end
     end
   end
 
   describe '#authorize_params' do
     before :each do
-      subject.stub(:session => {})
+      subject.stub(session: {})
     end
 
     it 'includes default scope for email' do
@@ -122,8 +122,8 @@ describe OmniAuth::Strategies::AngelList do
       subject.credentials['token'].should eq('123')
     end
 
-    it "return scopes" do
-      subject.credentials['scope'].should eq("email comment message talent")
+    it 'return scopes' do
+      subject.credentials['scope'].should eq('email comment message talent')
     end
 
     it 'returns the expiry status' do

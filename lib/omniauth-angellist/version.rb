@@ -1,5 +1,5 @@
 module Omniauth
   module AngelList
-    VERSION = "0.0.7"
+    VERSION = '0.0.7'
   end
 end
