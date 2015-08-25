@@ -2,7 +2,7 @@
 
 This gem contains the AngelList strategy for OmniAuth.
 
-AngelList uses the OAuth2 flow, you can read about it here: http://angel.co/api/oauth/faq
+AngelList uses the OAuth2 flow, you can read about it here: https://angel.co/api/oauth/faq
 
 ## How To Use It
 
@@ -17,10 +17,10 @@ You can pull them in directly from github e.g.:
 Once these are in, you need to add the following to your `config/initializers/omniauth.rb`:
 
     Rails.application.config.middleware.use OmniAuth::Builder do
-      provider :angellist, "consumer_key", "consumer_secret" 
+      provider :angellist, "consumer_key", "consumer_secret"
     end
 
-You will obviously have to put in your key and secret, which you get when you register your app with AngelList (they call them API Key and Secret Key). 
+You will obviously have to put in your key and secret, which you get when you register your app with AngelList (they call them API Key and Secret Key).
 
 Now just follow the README at: https://github.com/intridea/omniauth
 
