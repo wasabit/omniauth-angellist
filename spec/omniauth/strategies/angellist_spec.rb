@@ -4,7 +4,7 @@ require 'omniauth-angellist'
 describe OmniAuth::Strategies::AngelList do
   before :each do
     @request = double('Request')
-    @request.stub(:params) { {} }
+    allow(@request).to receive(:params).and_return({})
     @client_id = '123'
     @client_secret = 'afalsf'
     @raw_info = {
@@ -45,7 +45,7 @@ describe OmniAuth::Strategies::AngelList do
   subject do
     args = [@client_id, @client_secret, @options].compact
     OmniAuth::Strategies::AngelList.new(nil, *args).tap do |strategy|
-      strategy.stub(:request) { @request }
+      allow(strategy).to receive(:request).and_return(@request)
     end
   end
 
@@ -53,108 +53,108 @@ describe OmniAuth::Strategies::AngelList do
 
   describe '#client' do
     it 'has correct AngelList site' do
-      subject.client.site.should eq('https://angel.co/')
+      expect(subject.client.site).to eq('https://angel.co/')
     end
 
     it 'has correct authorize url' do
-      subject.client.options[:authorize_url].should eq('https://angel.co/api/oauth/authorize')
+      expect(subject.client.options[:authorize_url]).to eq('https://angel.co/api/oauth/authorize')
     end
 
     it 'has correct token url' do
-      subject.client.options[:token_url].should eq('https://angel.co/api/oauth/token')
+      expect(subject.client.options[:token_url]).to eq('https://angel.co/api/oauth/token')
     end
   end
 
   describe '#info' do
     before :each do
-      subject.stub(:raw_info) { @raw_info }
+      allow(subject).to receive(:raw_info).and_return(@raw_info)
     end
 
     context 'when data is present in raw info' do
       it 'returns the combined name' do
-        subject.info['name'].should eq('Sebastian Rabuini')
+        expect(subject.info['name']).to eq('Sebastian Rabuini')
       end
 
       it 'returns the bio' do
-        subject.info['bio'].should eq('Sebas')
+        expect(subject.info['bio']).to eq('Sebas')
       end
 
       it 'returns the image' do
-        subject.info['image'].should eq(@raw_info['image'])
+        expect(subject.info['image']).to eq(@raw_info['image'])
       end
 
       it 'return the email' do
-        subject.info['email'].should eq('sebas@wasabit.com.ar')
+        expect(subject.info['email']).to eq('sebas@wasabit.com.ar')
       end
 
       it 'return skills' do
-        subject.info['skills'].first['name'].should eq('ruby on rails')
+        expect(subject.info['skills'].first['name']).to eq('ruby on rails')
       end
     end
   end
 
   describe '#authorize_params' do
     before :each do
-      subject.stub(session: {})
+      allow(subject).to receive(:session).and_return({})
     end
 
     it 'includes default scope for email' do
-      subject.authorize_params['scope'].should eq('email')
+      expect(subject.authorize_params['scope']).to eq('email')
     end
   end
 
   describe '#credentials' do
     before :each do
       @access_token = double('OAuth2::AccessToken')
-      @access_token.stub(:token) { '123' } # Token is always required
-      @access_token.stub(:expires?)
-      @access_token.stub(:expires_at)
-      @access_token.stub(:refresh_token)
-      subject.stub(:access_token) { @access_token }
-      subject.stub(:raw_info) { @raw_info }
+      allow(@access_token).to receive(:token).and_return('123')
+      allow(@access_token).to receive(:expires?)
+      allow(@access_token).to receive(:expires_at)
+      allow(@access_token).to receive(:refresh_token)
+      allow(subject).to receive(:access_token).and_return(@access_token)
+      allow(subject).to receive(:raw_info).and_return(@raw_info)
     end
 
     it 'returns a Hash' do
-      subject.credentials.should be_a(Hash)
+      expect(subject.credentials).to be_a(Hash)
     end
 
     it 'returns the token' do
-      subject.credentials['token'].should eq('123')
+      expect(subject.credentials['token']).to eq('123')
     end
 
     it 'return scopes' do
-      subject.credentials['scope'].should eq('email comment message talent')
+      expect(subject.credentials['scope']).to eq('email comment message talent')
     end
 
     it 'returns the expiry status' do
-      @access_token.stub(:expires?) { true }
-      subject.credentials['expires'].should eq(true)
+      allow(@access_token).to receive(:expires?) { true }
+      expect(subject.credentials['expires']).to eq(true)
 
-      @access_token.stub(:expires?) { false }
-      subject.credentials['expires'].should eq(false)
+      allow(@access_token).to receive(:expires?) { false }
+      expect(subject.credentials['expires']).to eq(false)
     end
 
     it 'returns the refresh token and expiry time when expiring' do
       ten_mins_from_now = (Time.now + 360).to_i
-      @access_token.stub(:expires?) { true }
-      @access_token.stub(:refresh_token) { '321' }
-      @access_token.stub(:expires_at) { ten_mins_from_now }
-      subject.credentials['refresh_token'].should eq('321')
-      subject.credentials['expires_at'].should eq(ten_mins_from_now)
+      allow(@access_token).to receive(:expires?) { true }
+      allow(@access_token).to receive(:refresh_token) { '321' }
+      allow(@access_token).to receive(:expires_at) { ten_mins_from_now }
+      expect(subject.credentials['refresh_token']).to eq('321')
+      expect(subject.credentials['expires_at']).to eq(ten_mins_from_now)
     end
 
     it 'does not return the refresh token when it is nil and expiring' do
-      @access_token.stub(:expires?) { true }
-      @access_token.stub(:refresh_token) { nil }
-      subject.credentials['refresh_token'].should be_nil
-      subject.credentials.should_not have_key('refresh_token')
+      allow(@access_token).to receive(:expires?) { true }
+      allow(@access_token).to receive(:refresh_token) { nil }
+      expect(subject.credentials['refresh_token']).to be_nil
+      expect(subject.credentials).to_not have_key('refresh_token')
     end
 
     it 'does not return the refresh token when not expiring' do
-      @access_token.stub(:expires?) { false }
-      @access_token.stub(:refresh_token) { 'XXX' }
-      subject.credentials['refresh_token'].should be_nil
-      subject.credentials.should_not have_key('refresh_token')
+      allow(@access_token).to receive(:expires?) { false }
+      allow(@access_token).to receive(:refresh_token) { 'XXX' }
+      expect(subject.credentials['refresh_token']).to be_nil
+      expect(subject.credentials).to_not have_key('refresh_token')
     end
   end
 end

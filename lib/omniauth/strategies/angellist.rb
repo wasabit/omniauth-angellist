@@ -3,7 +3,7 @@ require 'omniauth/strategies/oauth2'
 module OmniAuth
   module Strategies
     class AngelList < OmniAuth::Strategies::OAuth2
-      DEFAULT_SCOPE = 'email'
+      DEFAULT_SCOPE = 'email'.freeze
 
       option :client_options, {
         site: 'https://angel.co/',
@@ -44,13 +44,12 @@ module OmniAuth
 
       credentials do
         hash = { 'token' => access_token.token }
-        hash.merge!('refresh_token' => access_token.refresh_token) if
+        hash['refresh_token'] = access_token.refresh_token if
           access_token.expires? && access_token.refresh_token
-        hash.merge!('expires_at' => access_token.expires_at) if
+        hash['expires_at'] = access_token.expires_at if
           access_token.expires?
-        hash.merge!('expires' => access_token.expires?)
-        hash.merge!(
-          'scope' => raw_info['scopes'] ? raw_info['scopes'].join(' ') : nil)
+        hash['expires'] = access_token.expires?
+        hash['scope'] = raw_info['scopes'] ? raw_info['scopes'].join(' ') : nil
         prune!(hash)
       end
 
