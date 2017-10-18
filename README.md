@@ -7,18 +7,22 @@ AngelList uses the OAuth2 flow, you can read about it here: https://angel.co/api
 ## How To Use It
 
 So let's say you're using Rails, you need to add the strategy to your `Gemfile`:
-
+```ruby
     gem 'omniauth-angellist'
+```
 
 You can pull them in directly from github e.g.:
-
+```ruby
     gem 'omniauth-angellist', :git => 'https://github.com/wasabit/omniauth-angellist.git'
+```
 
 Once these are in, you need to add the following to your `config/initializers/omniauth.rb`:
 
+```ruby
     Rails.application.config.middleware.use OmniAuth::Builder do
-      provider :angellist, "consumer_key", "consumer_secret"
+      provider :angellist, YOUR_CUSTOMER_KEY, YOUR_CUSTOMER_SECRET
     end
+```
 
 You will obviously have to put in your key and secret, which you get when you register your app with AngelList (they call them API Key and Secret Key).
 
